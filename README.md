@@ -1,2 +1,4 @@
 # U-pre
 Using U-net1D to achieve significant results in time series prediction
+
+This project, named U-pre, is led by Selen at Xidian and focuses on time series prediction. After investigating time series forecasting tasks, Selen identified that the input and output of time series prediction exhibit the same distribution, high correlation, and identical dimensionality, which align perfectly with the requirements for using U-Net with Conv1D. Leveraging this insight, Selen applied U-Net1D to the ETT series datasets for forecasting. While the results did not surpass current state-of-the-art (SOTA) methods, they outperformed several 2022 baselines. Consequently, the project was made publicly available. Selen is eager to encourage collaborative efforts to enhance this project with supplementary experiments and auxiliary measures, exploring the potential for U-pre to evolve into a new SOTA solution.
