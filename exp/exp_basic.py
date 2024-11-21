@@ -1,13 +1,13 @@
 import os
 import torch
-from model import iTransformer
+from model import U_pre
 
 
 class Exp_Basic(object):
     def __init__(self, args):
         self.args = args
         self.model_dict = {
-            'iTransformer': iTransformer,
+            'U_pre': U_pre,
         }
         self.device = self._acquire_device()
         self.model = self._build_model().to(self.device)

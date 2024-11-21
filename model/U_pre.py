@@ -1,12 +1,5 @@
 import torch
 import torch.nn as nn
-import torch.nn.functional as F
-
-from termcolor import cprint
-from layers.Transformer_EncDec import Encoder, EncoderLayer
-from layers.SelfAttention_Family import FullAttention, AttentionLayer
-from layers.Embed import DataEmbedding_inverted
-import numpy as np
 
 class UNet1D(nn.Module):
     def __init__(self, in_channels, out_channels):
@@ -58,11 +51,10 @@ class Model(nn.Module):
         super(Model, self).__init__()
         self.seq_len = configs.seq_len
         self.pred_len = configs.pred_len
-        self.output_attention = configs.output_attention
         self.use_norm = configs.use_norm
 
         #UNET
-        self.encoder = UNet1D(11,11)
+        self.encoder = UNet1D(configs.feature_dim,configs.feature_dim)
         self.projector = nn.Linear(configs.pred_len, configs.pred_len, bias=True)
 
     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
