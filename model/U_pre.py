@@ -1,3 +1,4 @@
+from transformers import BertModel, BertConfig
 import torch
 import torch.nn as nn
 
@@ -23,9 +24,9 @@ class UNet1D(nn.Module):
 
     def conv_block(self, in_channels, out_channels):
         return nn.Sequential(
-            nn.Conv1d(in_channels, out_channels, kernel_size=3, padding=1),
+            nn.Conv1d(in_channels, out_channels, kernel_size=8, padding="same"),
             nn.ReLU(),
-            nn.Conv1d(out_channels, out_channels, kernel_size=3, padding=1),
+            nn.Conv1d(out_channels, out_channels, kernel_size=8, padding="same"),
             nn.ReLU()
         )
 
@@ -46,16 +47,24 @@ class UNet1D(nn.Module):
         return dec1
 
 class Model(nn.Module):
-
     def __init__(self, configs):
         super(Model, self).__init__()
         self.seq_len = configs.seq_len
         self.pred_len = configs.pred_len
         self.use_norm = configs.use_norm
 
-        #UNET
-        self.encoder = UNet1D(configs.feature_dim,configs.feature_dim)
+        self.encoder = UNet1D(configs.feature_dim, configs.feature_dim)
         self.projector = nn.Linear(configs.pred_len, configs.pred_len, bias=True)
+
+        transformer_config = BertConfig(
+            hidden_size=configs.feature_dim,  
+            num_attention_heads=4,           
+            intermediate_size=configs.feature_dim * 4,  
+            hidden_dropout_prob=0.1,         
+            attention_probs_dropout_prob=0.1,  
+            num_hidden_layers=1             
+        )
+        self.transformer = BertModel(transformer_config)
 
     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
         if self.use_norm:
@@ -64,19 +73,31 @@ class Model(nn.Module):
             stdev = torch.sqrt(torch.var(x_enc, dim=1, keepdim=True, unbiased=False) + 1e-5)
             x_enc /= stdev
 
-        _, _, N = x_enc.shape 
-        x_enc = torch.cat([x_enc,x_mark_enc],2) 
-        x_enc = x_enc.permute(0,2,1) 
-        enc_out = self.encoder(x_enc)
-        dec_out = self.projector(enc_out)
-        dec_out = dec_out.permute(0,2,1)[:, :, :N]
+        _, _, N = x_enc.shape
+        x_enc = torch.cat([x_enc, x_mark_enc], 2)  
+        x_enc = x_enc.permute(0, 2, 1) 
+
+        enc_out = self.encoder(x_enc)  
+
+        Q = x_enc.permute(0, 2, 1)  
+        K_V = enc_out.permute(0, 2, 1)  
+
+        transformer_input = torch.cat([Q, K_V], dim=1)  
+        transformer_out = self.transformer(
+            inputs_embeds=transformer_input
+        ).last_hidden_state 
+
+        transformer_out = transformer_out[:, :Q.size(1), :]  
+        transformer_out = transformer_out.permute(0, 2, 1)  
+        dec_out = self.projector(transformer_out)
+        dec_out = dec_out.permute(0, 2, 1)[:, :, :N]
+
         if self.use_norm:
             dec_out = dec_out * (stdev[:, 0, :].unsqueeze(1).repeat(1, self.pred_len, 1))
             dec_out = dec_out + (means[:, 0, :].unsqueeze(1).repeat(1, self.pred_len, 1))
 
         return dec_out
 
-
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
         dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
-        return dec_out[:, -self.pred_len:, :]  
+        return dec_out[:, -self.pred_len:, :]
