@@ -57,9 +57,9 @@ class Model(nn.Module):
         self.projector = nn.Linear(configs.pred_len, configs.pred_len, bias=True)
 
         transformer_config = BertConfig(
-            hidden_size=configs.feature_dim,  
+            hidden_size=configs.pred_len,  
             num_attention_heads=4,           
-            intermediate_size=configs.feature_dim * 4,  
+            intermediate_size=configs.pred_len * 4,  
             hidden_dropout_prob=0.1,         
             attention_probs_dropout_prob=0.1,  
             num_hidden_layers=1             
@@ -74,21 +74,17 @@ class Model(nn.Module):
             x_enc /= stdev
 
         _, _, N = x_enc.shape
-        x_enc = torch.cat([x_enc, x_mark_enc], 2)  
-        x_enc = x_enc.permute(0, 2, 1) 
+        x_enc = torch.cat([x_enc, x_mark_enc], 2)  #--> B,L,N
+        x_enc = x_enc.permute(0, 2, 1) # --> B,N,L
 
-        enc_out = self.encoder(x_enc)  
+        enc_out = self.encoder(x_enc)  # --> B,N,L
 
-        Q = x_enc.permute(0, 2, 1)  
-        K_V = enc_out.permute(0, 2, 1)  
-
-        transformer_input = torch.cat([Q, K_V], dim=1)  
+        transformer_input = torch.cat([x_enc, enc_out], dim=1)  
         transformer_out = self.transformer(
             inputs_embeds=transformer_input
         ).last_hidden_state 
 
-        transformer_out = transformer_out[:, :Q.size(1), :]  
-        transformer_out = transformer_out.permute(0, 2, 1)  
+        transformer_out = transformer_out[:, :x_enc.size(1), :]   
         dec_out = self.projector(transformer_out)
         dec_out = dec_out.permute(0, 2, 1)[:, :, :N]
 

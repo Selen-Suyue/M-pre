@@ -20,9 +20,9 @@ if __name__ == '__main__':
     parser.add_argument('--model', type=str, default='U_pre') 
 
     # data loader
-    parser.add_argument('--data', type=str, default='ETTm2', help='dataset type') ######
+    parser.add_argument('--data', type=str, default='ETTm1', help='dataset type') ######
     parser.add_argument('--root_path', type=str, default='./data/', help='root path of the data file')
-    parser.add_argument('--data_path', type=str, default='ETTm2.csv', help='data csv file') #######
+    parser.add_argument('--data_path', type=str, default='ETTm1.csv', help='data csv file') #######
     parser.add_argument('--features', type=str, default='M',
                         help='forecasting task, options:[M, S, MS]; M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate')
     parser.add_argument('--target', type=str, default='OT', help='target feature in S or MS task')
