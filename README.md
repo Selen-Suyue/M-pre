@@ -1,3 +1,17 @@
+# How to run?
+
+1. **Install Required Packages**
+   
+   ```bash
+   pip install -r requirements.txt
+   ```
+
+2. **Run**
+   
+   ```bash
+   pyrhon run.py --data ETTm1 --data_path "your_data" --feature_dim "12 for m1/m2 and 11 for h1 and h2" 
+   ```
+   
 # U-pre
 Using U-net1D to achieve significant results in time series prediction
 
