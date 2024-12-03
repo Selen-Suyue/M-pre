@@ -97,3 +97,74 @@ class Model(nn.Module):
     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
         dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
         return dec_out[:, -self.pred_len:, :]
+
+# For Simple Conv Version
+# class SimpleConv1D(nn.Module):
+#     def __init__(self, in_channels, out_channels):
+#         super(SimpleConv1D, self).__init__()
+
+#         self.conv1 = nn.Conv1d(in_channels, 64, kernel_size=8, padding="same")
+#         self.conv2 = nn.Conv1d(64, 128, kernel_size=8, padding="same")
+#         self.conv3 = nn.Conv1d(128, 256, kernel_size=8, padding="same")
+#         self.conv4 = nn.Conv1d(256, out_channels, kernel_size=8, padding="same")
+
+#         self.relu = nn.ReLU()
+
+#     def forward(self, x):
+#         x = self.relu(self.conv1(x))
+#         x = self.relu(self.conv2(x))
+#         x = self.relu(self.conv3(x))
+#         x = self.conv4(x)
+#         return x
+
+# class Model(nn.Module):
+#     def __init__(self, configs):
+#         super(Model, self).__init__()
+#         self.seq_len = configs.seq_len
+#         self.pred_len = configs.pred_len
+#         self.use_norm = configs.use_norm
+
+#         self.encoder = SimpleConv1D(configs.feature_dim, configs.feature_dim)
+#         self.projector = nn.Linear(configs.pred_len, configs.pred_len, bias=True)
+
+#         transformer_config = GPT2Config(
+#             hidden_size=configs.pred_len,
+#             num_attention_heads=4,
+#             intermediate_size=configs.pred_len * 4,
+#             hidden_dropout_prob=0.1,
+#             attention_probs_dropout_prob=0.1,
+#             num_hidden_layers=1
+#         )
+#         self.transformer = GPT2Model(transformer_config)
+
+#     def forecast(self, x_enc, x_mark_enc, x_dec, x_mark_dec):
+#         if self.use_norm:
+#             means = x_enc.mean(1, keepdim=True).detach()
+#             x_enc = x_enc - means
+#             stdev = torch.sqrt(torch.var(x_enc, dim=1, keepdim=True, unbiased=False) + 1e-5)
+#             x_enc /= stdev
+
+#         _, _, N = x_enc.shape
+#         x_enc = torch.cat([x_enc, x_mark_enc], 2)  # --> B,L,N
+#         x_enc = x_enc.permute(0, 2, 1)  # --> B,N,L
+
+#         enc_out = self.encoder(x_enc)  # --> B,N,L
+
+#         transformer_input = torch.cat([x_enc, enc_out], dim=1)
+#         transformer_out = self.transformer(
+#             inputs_embeds=transformer_input
+#         ).last_hidden_state
+
+#         transformer_out = transformer_out[:, :x_enc.size(1), :]
+#         dec_out = self.projector(transformer_out)
+#         dec_out = dec_out.permute(0, 2, 1)[:, :, :N]
+
+#         if self.use_norm:
+#             dec_out = dec_out * (stdev[:, 0, :].unsqueeze(1).repeat(1, self.pred_len, 1))
+#             dec_out = dec_out + (means[:, 0, :].unsqueeze(1).repeat(1, self.pred_len, 1))
+
+#         return dec_out
+
+#     def forward(self, x_enc, x_mark_enc, x_dec, x_mark_dec, mask=None):
+#         dec_out = self.forecast(x_enc, x_mark_enc, x_dec, x_mark_dec)
+#         return dec_out[:, -self.pred_len:, :]
