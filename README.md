@@ -8,11 +8,17 @@
    pip install -r requirements.txt
    ```
 
-2. **Run**
+2. **Train**
    
    ```bash
    conda activate mpre
    pyrhon run.py --data ETTm1 --data_path "your_data" --feature_dim "12 for m1/m2 and 11 for h1 and h2" 
+   ```
+
+3. **Test**
+   ```bash
+   conda activate mpre
+   pyrhon run.py --is_training 0 --data ETTm1 --data_path "your_data" --feature_dim "12 for m1/m2 and 11 for h1 and h2" 
    ```
 
 # M-pre
