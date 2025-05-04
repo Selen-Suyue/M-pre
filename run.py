@@ -12,24 +12,24 @@ if __name__ == '__main__':
     torch.manual_seed(fix_seed)
     np.random.seed(fix_seed)
 
-    parser = argparse.ArgumentParser(description='U-pre')
+    parser = argparse.ArgumentParser(description='M-pre')
 
     # basic config
     parser.add_argument('--is_training', type=int,default=1, help='status') 
     parser.add_argument('--model_id', type=str,  default='test', help='model id') 
-    parser.add_argument('--model', type=str, default='U_pre') 
+    parser.add_argument('--model', type=str, default='M_pre') 
 
     # data loader
-    parser.add_argument('--data', type=str, default='ETTm1', help='dataset type') ######
+    parser.add_argument('--data', type=str, default='ETTh1', help='dataset type') ######
     parser.add_argument('--root_path', type=str, default='./data/', help='root path of the data file')
-    parser.add_argument('--data_path', type=str, default='ETTm1.csv', help='data csv file') #######
+    parser.add_argument('--data_path', type=str, default='ETTh1.csv', help='data csv file') #######
     parser.add_argument('--features', type=str, default='M',
                         help='forecasting task, options:[M, S, MS]; M:multivariate predict multivariate, S:univariate predict univariate, MS:multivariate predict univariate')
     parser.add_argument('--target', type=str, default='OT', help='target feature in S or MS task')
     parser.add_argument('--freq', type=str, default='h',
                         help='freq for time features encoding, options:[s:secondly, t:minutely, h:hourly, d:daily, b:business days, w:weekly, m:monthly], you can also use more detailed freq like 15min or 3h')
     parser.add_argument('--checkpoints', type=str, default='./checkpoints/', help='location of model checkpoints')
-    parser.add_argument('--feature_dim', type=int, default=12) #######
+    parser.add_argument('--feature_dim', type=int, default=11) #######
 
     # forecasting task
     parser.add_argument('--seq_len', type=int, default=96, help='input sequence length')

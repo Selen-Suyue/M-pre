@@ -3,27 +3,35 @@
 1. **Install Required Packages**
    
    ```bash
+   conda create -n mpre
+   conda activate mpre
    pip install -r requirements.txt
    ```
 
 2. **Run**
    
    ```bash
+   conda activate mpre
    pyrhon run.py --data ETTm1 --data_path "your_data" --feature_dim "12 for m1/m2 and 11 for h1 and h2" 
    ```
-   
-# U-pre
+
+# M-pre
+We tried Mamba for time series forecasting based on feature-conditioned tokens
+
+# Related Works
+You can refer [U-pre](https://github.com/Selen-Suyue/U-pre).
+## U-pre
 Using U-net1D to achieve significant results in time series prediction
 
 This project, named U-pre, is led by Selen at Xidian and focuses on time series prediction. After investigating time series forecasting tasks, Selen identified that the input and output of time series prediction exhibit the same distribution, high correlation, and identical dimensionality, which align perfectly with the requirements for using U-Net with Conv1D. Leveraging this insight, Selen applied U-Net1D to the ETT series datasets for forecasting. While the results did not surpass current state-of-the-art (SOTA) methods, they outperformed several 2022 baselines. Consequently, the project was made publicly available. Selen is eager to encourage collaborative efforts to enhance this project with supplementary experiments and auxiliary measures, exploring the potential for U-pre to evolve into a new SOTA solution. 
 
-# U-pre v2
+## U-pre v2
 
 A significant limitation of U-pre lies in Conv1D's inability to capture long-term dependencies, as it focuses solely on short-term relationships within each window. However, this is not without value, as it complements transformers by addressing local temporal details that might be overlooked in their focus on long-range dependencies. To overcome this limitation, U-pre V2 introduces an innovative hybrid approach that integrates the output of a U-Net convolutional encoder with the original time series as input tokens to a single BERT encoder layer. This approach leverages both local and global contextual information. Furthermore, the U-Net's preprocessing stage implicitly assigns local gradient weights to different timesteps, enabling a more nuanced attention mechanism that transcends the self-attention limitations of traditional sequence models, thereby capturing richer spatio-temporal dependencies.
 
 # Experiment
 
-*ETT数据集上的预测性能（MSE/MAE）比较 (96步),我们发布了[中文报告](https://github.com/Selen-Suyue/Selen-Suyue.github.io/raw/master/files/upre.pdf)*
+*ETT数据集上的预测性能（MSE/MAE）比较 (96步),我们发布了[中文报告]()*
 
 | 模型 | ETTm1 (MSE/MAE) | ETTm2 (MSE/MAE) | ETTh1 (MSE/MAE) | ETTh2 (MSE/MAE) | 平均 (MSE/MAE) |
 |------|-----------------|-----------------|-----------------|-----------------|----------------|
@@ -40,3 +48,4 @@ A significant limitation of U-pre lies in Conv1D's inability to capture long-ter
 | Autoformer | <span style="color:red">0.505/0.475</span> | <span style="color:red">0.255/0.339</span> | <span style="color:red">0.449/0.459</span> | <span style="color:red">0.450/0.459</span> | <span style="color:red">0.415/0.433</span> |
 | U-preV1 | <span style="color:red">0.466/0.451</span> | <span style="color:red">0.195/0.275</span> | <span style="color:red">0.524/0.483</span> | <span style="color:red">0.367/0.395</span> | <span style="color:red">0.388/0.401</span> |
 | U-preV2 | 0.370/0.396 | 0.188/0.273 | 0.419/0.429 | 0.325/0.371 | 0.326/0.367 |
+| M-pre | 0.334/0.377 | 0.186/0.268 | 0.412/0.427 | 0.366/0.397 | 0.325/0.367 |
