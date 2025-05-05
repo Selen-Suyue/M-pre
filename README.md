@@ -1,3 +1,7 @@
+# M-pre
+![teaser](https://github.com/Selen-Suyue/Selen-Suyue.github.io/raw/master/_pages/images/mpre.png)
+We tried Mamba for time series forecasting based on feature-conditioned tokens
+
 # How to run?
 
 1. **Install Required Packages**
@@ -20,9 +24,6 @@
    conda activate mpre
    pyrhon run.py --is_training 0 --data ETTm1 --data_path "your_data" --feature_dim "12 for m1/m2 and 11 for h1 and h2" 
    ```
-
-# M-pre
-We tried Mamba for time series forecasting based on feature-conditioned tokens
 
 # Related Works
 You can refer [U-pre](https://github.com/Selen-Suyue/U-pre).
