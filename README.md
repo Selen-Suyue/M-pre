@@ -1,5 +1,5 @@
 # M-pre
-![teaser](https://raw.githubusercontent.com/Selen-Suyue/Selen-Suyue.github.io/master/_pages/images/mpre.png) 
+![teaser](https://github.com/Selen-Suyue/Selen-Suyue.github.io/blob/master/images/mpre.png)  
 We tried Mamba for time series forecasting based on feature-conditioned tokens
 
 # How to run?
