@@ -37,7 +37,7 @@ A significant limitation of U-pre lies in Conv1D's inability to capture long-ter
 
 # Experiment
 
-*ETT数据集上的预测性能（MSE/MAE）比较 (96步),我们发布了[中文报告]()*
+*ETT数据集上的预测性能（MSE/MAE）比较 (96步),我们发布了[中文报告](M_pre.pdf)*
 
 | 模型 | ETTm1 (MSE/MAE) | ETTm2 (MSE/MAE) | ETTh1 (MSE/MAE) | ETTh2 (MSE/MAE) | 平均 (MSE/MAE) |
 |------|-----------------|-----------------|-----------------|-----------------|----------------|
